@@ -22,28 +22,54 @@
             font-size: 2em;
             margin-bottom: 20px;
         }
-        p {
-            font-size: 1.2em;
-            line-height: 1.5;
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 10px;
+            cursor: pointer;
         }
-        .heart {
-            font-size: 4em;
-            color: red;
-            margin: 20px 0;
+        #noButton {
+            position: absolute;
         }
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.5em;
             }
-            p {
-                font-size: 1em;
+            button {
+                padding: 8px 15px;
+                font-size: 0.9em;
             }
         }
     </style>
 </head>
 <body>
-    <h1>С Днём Женщины!</h1>
-    <p>Пусть каждый день будет таким, как этот: наполнен улыбками, любовью и благополучием.</p>
-    <div class="heart">❤️</div>
+    <h1>Вы женщина?</h1>
+    <button id="yesButton">Да</button>
+    <button id="noButton">Нет</button>
+
+    <script>
+        const noButton = document.getElementById('noButton');
+        const yesButton = document.getElementById('yesButton');
+
+        function getRandomPosition() {
+            const maxX = window.innerWidth - noButton.offsetWidth;
+            const maxY = window.innerHeight - noButton.offsetHeight;
+            return {
+                x: Math.random() * maxX,
+                y: Math.random() * maxY
+            };
+        }
+
+        noButton.addEventListener('mouseenter', () => {
+            const { x, y } = getRandomPosition();
+            noButton.style.left = `${x}px`;
+            noButton.style.top = `${y}px`;
+        });
+
+        yesButton.addEventListener('click', () => {
+            alert('С Днём Женщины!');
+            // Дополнительные действия при нажатии на "Да"
+        });
+    </script>
 </body>
 </html>
