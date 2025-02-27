@@ -2,73 +2,136 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поздравление с 8 марта</title>
+    <title>С 8 Марта!</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            font-family: Arial, sans-serif;
-            color: white;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            overflow-x: hidden;
+        }
+
+        #question-section {
             text-align: center;
+            transition: 0.5s;
         }
+
+        #congrats-section {
+            display: none;
+            padding: 20px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
         h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
+            color: #d32f2f;
+            font-size: 2.5em;
+            margin-bottom: 30px;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
+
+        .button {
+            padding: 15px 30px;
             margin: 10px;
+            border: none;
+            border-radius: 25px;
             cursor: pointer;
+            font-size: 1.2em;
+            transition: 0.3s;
         }
-        #noButton {
+
+        #yes-btn {
+            background-color: #4CAF50;
+            color: white;
             position: absolute;
         }
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
+
+        #no-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .show {
+            display: block !important;
+            animation: slideUp 1s forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
             }
-            button {
-                padding: 8px 15px;
-                font-size: 0.9em;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
+        }
+
+        .congrats-text {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin: 20px;
+            max-width: 600px;
         }
     </style>
 </head>
 <body>
-    <h1>Вы женщина?</h1>
-    <button id="yesButton">Да</button>
-    <button id="noButton">Нет</button>
+    <section id="question-section">
+        <h1>Ты женщина?</h1>
+        <button id="yes-btn" class="button">Да</button>
+        <button id="no-btn" class="button">Нет</button>
+    </section>
+
+    <section id="congrats-section">
+        <div class="congrats-text">
+            <h2>С Международным женским днём! 🌸</h2>
+            <p>Пусть каждый день приносит радость,<br>
+               Улыбки светлые даря,<br>
+               Желаем счастья без границ,<br>
+               Любви, удачи и добра!</p>
+            <p>Оставайся всегда такой же прекрасной!</p>
+        </div>
+    </section>
 
     <script>
-        const noButton = document.getElementById('noButton');
-        const yesButton = document.getElementById('yesButton');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const questionSection = document.getElementById('question-section');
+        const congratsSection = document.getElementById('congrats-section');
 
-        function getRandomPosition() {
-            const maxX = window.innerWidth - noButton.offsetWidth;
-            const maxY = window.innerHeight - noButton.offsetHeight;
-            return {
-                x: Math.random() * maxX,
-                y: Math.random() * maxY
-            };
-        }
-
-        noButton.addEventListener('mouseenter', () => {
-            const { x, y } = getRandomPosition();
-            noButton.style.left = `${x}px`;
-            noButton.style.top = `${y}px`;
+        yesBtn.addEventListener('click', () => {
+            const maxX = window.innerWidth - yesBtn.offsetWidth;
+            const maxY = window.innerHeight - yesBtn.offsetHeight;
+            
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
+            
+            yesBtn.style.left = `${newX}px`;
+            yesBtn.style.top = `${newY}px`;
         });
 
-        noButton.addEventListener('click', () => {
-            window.location.href = 'congratulations.html'; // Переход на страницу с поздравлением
+        noBtn.addEventListener('click', () => {
+            questionSection.style.display = 'none';
+            congratsSection.classList.add('show');
+            
+            // Плавная прокрутка к поздравлению
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
+
+        // Добавляем небольшую задержку для первоначальной позиции кнопки "Да"
+        setTimeout(() => {
+            yesBtn.style.position = 'absolute';
+        }, 100);
     </script>
 </body>
 </html>
