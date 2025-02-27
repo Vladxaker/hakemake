@@ -4,183 +4,206 @@
     <meta charset="UTF-8">
     <title>С 8 Марта!</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: Arial, sans-serif;
             background: linear-gradient(45deg, #ff9a9e, #fad0c4);
             overflow: hidden;
+            height: 100vh;
         }
 
-        .main-container {
+        .container {
             position: relative;
             height: 100vh;
-            transition: 1.5s transform;
+            transition: transform 1.2s ease-in-out;
         }
 
-        #question-section {
+        .section {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            transition: 0.5s;
-            width: 100%;
-        }
-
-        #congrats-section {
-            position: absolute;
-            top: 100vh;
+            top: 0;
             left: 0;
             width: 100%;
-            height: 100vh;
+            height: 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transition: 1s;
             padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.8s ease;
         }
 
-        .scroll-animation {
-            transform: translateY(-100vh);
+        .active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .show-congrats {
-            opacity: 1 !important;
-            transform: translateY(-50px) !important;
-        }
-
-        .hide-section {
-            opacity: 0 !important;
-            visibility: hidden !important;
-        }
-
-        h1 {
+        h1, h2 {
             color: #d32f2f;
-            font-size: 2.5em;
+            text-align: center;
             margin-bottom: 30px;
         }
+
+        h1 { font-size: 2.5em; }
+        h2 { font-size: 2em; }
 
         .buttons-wrapper {
             display: flex;
             gap: 20px;
-            justify-content: center;
+            margin-top: 30px;
         }
 
         .button {
-            padding: 15px 30px;
+            padding: 15px 40px;
             border: none;
-            border-radius: 25px;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 1.2em;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            min-width: 140px;
         }
 
-        #yes-btn {
-            background-color: #4CAF50;
+        .yes-btn {
+            background: #4CAF50;
             color: white;
-            position: relative;
+            box-shadow: 0 4px 15px rgba(76,175,80,0.3);
         }
 
-        #no-btn {
-            background-color: #f44336;
+        .no-btn {
+            background: #f44336;
             color: white;
+            box-shadow: 0 4px 15px rgba(244,67,54,0.3);
         }
 
-        .congrats-text {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        .content-box {
+            background: rgba(255,255,255,0.98);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
             max-width: 600px;
-            transform: translateY(100px);
+            transform: translateY(50px);
             opacity: 0;
-            transition: 1s;
+            transition: all 1s ease;
         }
 
-        .congrats-visible .congrats-text {
+        .visible .content-box {
             transform: translateY(0);
             opacity: 1;
+        }
+
+        .emoji {
+            font-size: 3.5em;
+            margin: 25px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <section id="question-section">
-            <h1>Ты женщина?</h1>
-            <div class="buttons-wrapper">
-                <button id="yes-btn" class="button">Да</button>
-                <button id="no-btn" class="button">Нет</button>
+    <div class="container">
+        <!-- Первый вопрос -->
+        <div class="section active" id="question-1">
+            <div class="content-box">
+                <h1>Ты женщина?</h1>
+                <div class="buttons-wrapper">
+                    <button class="button yes-btn">Да</button>
+                    <button class="button no-btn">Нет</button>
+                </div>
             </div>
-        </section>
+        </div>
 
-        <section id="congrats-section">
-            <div class="congrats-text">
-                <h2>С Международным женским днём! 🌸</h2>
-                <p>Пусть каждый день приносит радость,<br>
-                   Улыбки светлые даря,<br>
-                   Желаем счастья без границ,<br>
-                   Любви, удачи и добра!</p>
-                <p>Оставайся всегда такой же прекрасной!</p>
+        <!-- Второй экран -->
+        <div class="section" id="question-2">
+            <div class="content-box">
+                <div class="emoji">🎉✨</div>
+                <h2>И это правильно!<br>Пойдем дальше?</h2>
+                <div class="buttons-wrapper">
+                    <button class="button yes-btn">Да</button>
+                    <button class="button no-btn">Нет</button>
+                </div>
             </div>
-        </section>
+        </div>
     </div>
 
     <script>
-        const yesBtn = document.getElementById('yes-btn');
-        const noBtn = document.getElementById('no-btn');
-        const mainContainer = document.querySelector('.main-container');
-        const questionSection = document.getElementById('question-section');
-        const congratsSection = document.getElementById('congrats-section');
-        const congratsText = document.querySelector('.congrats-text');
+        const container = document.querySelector('.container');
+        const sections = document.querySelectorAll('.section');
+        const yesButtons = document.querySelectorAll('.yes-btn');
+        const noButtons = document.querySelectorAll('.no-btn');
 
-        // Обработчик для кнопки "Да"
-        yesBtn.addEventListener('click', (e) => {
-            const button = e.target;
+        // Обработчик для кнопки "Да" в первом вопросе
+        yesButtons[0].addEventListener('click', (e) => {
+            moveButton(e.target);
+        });
+
+        // Обработчик для кнопки "Нет" в первом вопросе
+        noButtons[0].addEventListener('click', () => {
+            switchSection('question-2');
+        });
+
+        // Общая функция перемещения кнопки
+        function moveButton(button) {
             const maxX = window.innerWidth - button.offsetWidth - 30;
             const maxY = window.innerHeight - button.offsetHeight - 30;
             
-            const newX = Math.random() * maxX;
-            const newY = Math.random() * maxY;
-            
             button.style.position = 'absolute';
-            button.style.left = `${newX}px`;
-            button.style.top = `${newY}px`;
-        });
+            button.style.left = `${Math.random() * maxX}px`;
+            button.style.top = `${Math.random() * maxY}px`;
+        }
 
-        // Обработчик для кнопки "Нет"
-        noBtn.addEventListener('click', () => {
-            // Блокируем повторные нажатия
-            noBtn.style.pointerEvents = 'none';
-            yesBtn.style.pointerEvents = 'none';
+        // Функция переключения секций
+        function switchSection(targetId) {
+            // Блокируем кнопки
+            document.querySelectorAll('.button').forEach(btn => {
+                btn.style.pointerEvents = 'none';
+            });
 
-            // Запускаем анимацию прокрутки
-            mainContainer.classList.add('scroll-animation');
-            questionSection.classList.add('hide-section');
-
-            // Запускаем анимацию появления поздравления
+            // Анимация перехода
+            container.style.transform = 'translateY(-100vh)';
+            
             setTimeout(() => {
-                congratsSection.style.opacity = '1';
-                congratsSection.classList.add('show-congrats');
-                congratsSection.classList.add('congrats-visible');
-            }, 1000);
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    if(section.id === targetId) {
+                        section.classList.add('active', 'visible');
+                    }
+                });
+                
+                // Возвращаем контейнер в исходное положение
+                setTimeout(() => {
+                    container.style.transform = 'translateY(0)';
+                }, 50);
+                
+                // Разблокируем кнопки через 1.5 секунды
+                setTimeout(() => {
+                    document.querySelectorAll('.button').forEach(btn => {
+                        btn.style.pointerEvents = 'auto';
+                    });
+                }, 1500);
+            }, 1200);
+        }
 
-            // Финишная анимация текста
-            setTimeout(() => {
-                congratsText.classList.add('congrats-visible');
-            }, 1500);
-        });
-
-        // Ограничение перемещения кнопки "Да"
+        // Обработчик ресайза
         window.addEventListener('resize', () => {
-            const rect = yesBtn.getBoundingClientRect();
-            if(rect.right > window.innerWidth) {
-                yesBtn.style.left = `${window.innerWidth - yesBtn.offsetWidth - 10}px`;
-            }
-            if(rect.bottom > window.innerHeight) {
-                yesBtn.style.top = `${window.innerHeight - yesBtn.offsetHeight - 10}px`;
-            }
+            document.querySelectorAll('.yes-btn').forEach(btn => {
+                const rect = btn.getBoundingClientRect();
+                if(rect.right > window.innerWidth) {
+                    btn.style.left = `${window.innerWidth - btn.offsetWidth - 20}px`;
+                }
+                if(rect.bottom > window.innerHeight) {
+                    btn.style.top = `${window.innerHeight - btn.offsetHeight - 20}px`;
+                }
+            });
         });
     </script>
 </body>
