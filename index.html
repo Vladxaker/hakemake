@@ -66,9 +66,8 @@
             noButton.style.top = `${y}px`;
         });
 
-        yesButton.addEventListener('click', () => {
-            alert('С Днём Женщины!');
-            // Дополнительные действия при нажатии на "Да"
+        noButton.addEventListener('click', () => {
+            window.location.href = 'congratulations.html'; // Переход на страницу с поздравлением
         });
     </script>
 </body>
