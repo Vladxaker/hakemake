@@ -5,31 +5,27 @@
     <title>С 8 Марта!</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
             background: linear-gradient(45deg, #ff9a9e, #fad0c4);
-            overflow-x: hidden;
-            transition: 1s;
+            overflow: hidden;
         }
 
-        .scroll-container {
-            min-height: 200vh;
-        }
-
-        .sticky-section {
-            position: sticky;
-            top: 0;
+        .main-container {
+            position: relative;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: 0.5s;
-            background: inherit;
+            transition: 1.5s transform;
         }
 
         #question-section {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
+            transition: 0.5s;
+            width: 100%;
         }
 
         #congrats-section {
@@ -37,17 +33,27 @@
             top: 100vh;
             left: 0;
             width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             opacity: 0;
-            visibility: hidden;
             transition: 1s;
-            padding: 40px 20px;
-            text-align: center;
+            padding: 20px;
+        }
+
+        .scroll-animation {
+            transform: translateY(-100vh);
         }
 
         .show-congrats {
             opacity: 1 !important;
-            visibility: visible !important;
             transform: translateY(-50px) !important;
+        }
+
+        .hide-section {
+            opacity: 0 !important;
+            visibility: hidden !important;
         }
 
         h1 {
@@ -59,7 +65,6 @@
         .buttons-wrapper {
             display: flex;
             gap: 20px;
-            flex-wrap: wrap;
             justify-content: center;
         }
 
@@ -75,6 +80,7 @@
         #yes-btn {
             background-color: #4CAF50;
             color: white;
+            position: relative;
         }
 
         #no-btn {
@@ -87,15 +93,21 @@
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            margin: 20px auto;
             max-width: 600px;
-            transform: translateY(50px);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: 1s;
+        }
+
+        .congrats-visible .congrats-text {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="scroll-container">
-        <section class="sticky-section" id="question-section">
+    <div class="main-container">
+        <section id="question-section">
             <h1>Ты женщина?</h1>
             <div class="buttons-wrapper">
                 <button id="yes-btn" class="button">Да</button>
@@ -118,9 +130,10 @@
     <script>
         const yesBtn = document.getElementById('yes-btn');
         const noBtn = document.getElementById('no-btn');
+        const mainContainer = document.querySelector('.main-container');
         const questionSection = document.getElementById('question-section');
         const congratsSection = document.getElementById('congrats-section');
-        const body = document.body;
+        const congratsText = document.querySelector('.congrats-text');
 
         // Обработчик для кнопки "Да"
         yesBtn.addEventListener('click', (e) => {
@@ -138,21 +151,25 @@
 
         // Обработчик для кнопки "Нет"
         noBtn.addEventListener('click', () => {
-            // Активируем анимацию
-            body.classList.add('no-scroll');
-            questionSection.style.opacity = '0';
-            
-            // Прокрутка страницы
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-            });
+            // Блокируем повторные нажатия
+            noBtn.style.pointerEvents = 'none';
+            yesBtn.style.pointerEvents = 'none';
 
-            // Задержка для синхронизации анимаций
+            // Запускаем анимацию прокрутки
+            mainContainer.classList.add('scroll-animation');
+            questionSection.classList.add('hide-section');
+
+            // Запускаем анимацию появления поздравления
             setTimeout(() => {
+                congratsSection.style.opacity = '1';
                 congratsSection.classList.add('show-congrats');
-                questionSection.style.display = 'none';
-            }, 800);
+                congratsSection.classList.add('congrats-visible');
+            }, 1000);
+
+            // Финишная анимация текста
+            setTimeout(() => {
+                congratsText.classList.add('congrats-visible');
+            }, 1500);
         });
 
         // Ограничение перемещения кнопки "Да"
