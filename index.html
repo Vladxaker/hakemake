@@ -6,38 +6,48 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            min-height: 100vh;
             margin: 0;
             background: linear-gradient(45deg, #ff9a9e, #fad0c4);
             overflow-x: hidden;
+            transition: 1s;
         }
 
-        .container {
+        .scroll-container {
+            min-height: 200vh;
+        }
+
+        .sticky-section {
+            position: sticky;
+            top: 0;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            transition: 0.5s;
+            background: inherit;
         }
 
         #question-section {
             text-align: center;
-            margin-bottom: 50vh;
         }
 
         #congrats-section {
+            position: absolute;
+            top: 100vh;
+            left: 0;
+            width: 100%;
             opacity: 0;
-            transform: translateY(50px);
+            visibility: hidden;
             transition: 1s;
             padding: 40px 20px;
             text-align: center;
-            max-width: 600px;
         }
 
         .show-congrats {
             opacity: 1 !important;
-            transform: translateY(0) !important;
+            visibility: visible !important;
+            transform: translateY(-50px) !important;
         }
 
         h1 {
@@ -60,13 +70,11 @@
             cursor: pointer;
             font-size: 1.2em;
             transition: 0.3s;
-            position: relative;
         }
 
         #yes-btn {
             background-color: #4CAF50;
             color: white;
-            transition: all 0.3s;
         }
 
         #no-btn {
@@ -79,19 +87,15 @@
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            margin: 20px;
-        }
-
-        @keyframes jump {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0); }
+            margin: 20px auto;
+            max-width: 600px;
+            transform: translateY(50px);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <section id="question-section">
+    <div class="scroll-container">
+        <section class="sticky-section" id="question-section">
             <h1>Ты женщина?</h1>
             <div class="buttons-wrapper">
                 <button id="yes-btn" class="button">Да</button>
@@ -114,7 +118,9 @@
     <script>
         const yesBtn = document.getElementById('yes-btn');
         const noBtn = document.getElementById('no-btn');
+        const questionSection = document.getElementById('question-section');
         const congratsSection = document.getElementById('congrats-section');
+        const body = document.body;
 
         // Обработчик для кнопки "Да"
         yesBtn.addEventListener('click', (e) => {
@@ -132,17 +138,24 @@
 
         // Обработчик для кнопки "Нет"
         noBtn.addEventListener('click', () => {
-            // Активируем анимацию появления
-            congratsSection.classList.add('show-congrats');
+            // Активируем анимацию
+            body.classList.add('no-scroll');
+            questionSection.style.opacity = '0';
             
-            // Плавная прокрутка к поздравлению
-            congratsSection.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
+            // Прокрутка страницы
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
             });
+
+            // Задержка для синхронизации анимаций
+            setTimeout(() => {
+                congratsSection.classList.add('show-congrats');
+                questionSection.style.display = 'none';
+            }, 800);
         });
 
-        // Запрещаем кнопке "Да" выходить за пределы экрана
+        // Ограничение перемещения кнопки "Да"
         window.addEventListener('resize', () => {
             const rect = yesBtn.getBoundingClientRect();
             if(rect.right > window.innerWidth) {
