@@ -118,6 +118,14 @@
         .option:hover {
             background: #fff0f0;
         }
+
+        .correct {
+            background: #d4edda !important;
+        }
+
+        .wrong {
+            background: #f8d7da !important;
+        }
     </style>
 </head>
 <body>
@@ -204,7 +212,7 @@
     document.querySelector('#screen1 .no-btn').addEventListener('click', () => switchScreen('screen2'));
 
     // Обработчики экрана 2
-    document.querySelector('#screen2 .yes-btn').addEventListener('click', () => switchScreen('screen4'));
+    document.querySelector('#screen2 .yes-btn').addEventListener('click', () => switchScreen('screen3'));
     document.querySelector('#screen2 .no-btn').addEventListener('click', () => switchScreen('screen3'));
 
     // Обработчики экрана 3
@@ -221,8 +229,14 @@
     }
 
     function switchScreen(target) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.replace('visible', 'hidden'));
-        document.getElementById(target).classList.replace('hidden', 'visible');
+        document.querySelectorAll('.screen').forEach(s => {
+            s.classList.remove('visible');
+            s.classList.add('hidden');
+        });
+        
+        const targetScreen = document.getElementById(target);
+        targetScreen.classList.remove('hidden');
+        targetScreen.classList.add('visible');
         
         if(target === 'screen3') {
             startJokeTimer();
@@ -236,7 +250,9 @@
         const buttons = document.querySelector('#screen3 .buttons');
 
         jokeContainer.textContent = jokes[0];
-        
+        buttons.classList.add('hidden');
+        timerEl.classList.remove('hidden');
+
         const timer = setInterval(() => {
             seconds--;
             timerEl.textContent = seconds;
@@ -256,23 +272,18 @@
     // Обработчики теста
     document.querySelectorAll('.option').forEach(option => {
         option.addEventListener('click', function() {
-            // Проверка правильных ответов
-            const question = this.closest('.test-question');
             const correctAnswers = [
                 'Пудреница',
                 '#d8a5a6',
                 'Бьюти-бальзам'
             ];
 
-            if(correctAnswers.includes(this.textContent || this.style.background)) {
-                this.style.background = '#d4edda';
-            } else {
-                this.style.background = '#f8d7da';
-            }
+            const answer = this.textContent || this.style.backgroundColor;
+            this.classList.add(correctAnswers.includes(answer) ? 'correct' : 'wrong');
         });
     });
 
-    // Ресайз кнопки
+    // Обработчик ресайза
     window.addEventListener('resize', () => {
         const yesBtn = document.querySelector('#screen1 .yes-btn');
         if(yesBtn.style.position === 'absolute') {
