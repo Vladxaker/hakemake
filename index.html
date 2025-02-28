@@ -25,11 +25,11 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            animation: fadeIn 0.5s;
         }
 
         .screen.active {
             display: flex;
-            animation: fadeIn 0.5s;
         }
 
         .content {
@@ -86,11 +86,6 @@
             border-radius: 15px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         .joke-box {
             margin: 20px 0;
             min-height: 80px;
@@ -134,6 +129,11 @@
 
         .wrong {
             background: #f8d7da !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
@@ -227,13 +227,30 @@
             player = new YT.Player('player', {
                 height: '450',
                 width: '800',
-                videoId: '2BmPCPipQtA', // Замените на ID вашего видео
+                videoId: '2BmPCPipQtA',
                 playerVars: {
                     'autoplay': 1,
                     'controls': 1,
-                    'rel': 0
+                    'rel': 0,
+                    'mute': 1,
+                    'modestbranding': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
                 }
             });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                event.target.seekTo(0);
+                event.target.playVideo();
+            }
         }
 
         // Данные для анекдотов
@@ -246,7 +263,14 @@
         // Управление экранами
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            const screen = document.getElementById(screenId);
+            screen.classList.add('active');
+            
+            if(screenId === 'screen5' && player) {
+                player.seekTo(0);
+                player.unMute();
+                player.playVideo();
+            }
         }
 
         // Обработчики экрана 1
@@ -311,6 +335,7 @@
                 if(correctAnswers === 3) {
                     setTimeout(() => {
                         showScreen('screen5');
+                        player.unMute();
                         player.playVideo();
                     }, 1000);
                 }
