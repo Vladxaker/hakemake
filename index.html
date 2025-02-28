@@ -34,7 +34,7 @@
             visibility: visible;
         }
 
-        #screen2 {
+        #screen2, #screen3 {
             opacity: 0;
             visibility: hidden;
             transform: translateY(100%);
@@ -85,6 +85,22 @@
             font-size: 3em;
             margin: 20px 0;
         }
+
+        #timer {
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #d32f2f;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .joke {
+            font-style: italic;
+            margin: 20px 0;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -111,27 +127,80 @@
         </div>
     </div>
 
+    <!-- Третий экран -->
+    <div class="screen" id="screen3">
+        <div class="content">
+            <h1>Минутка отдыха</h1>
+            <div class="joke">
+                Почему женщины носят сумки?<br>
+                Потому что в карманах вся косметика не помещается! 💄
+            </div>
+            <div id="timer">15</div>
+            <div class="buttons hidden">
+                <button class="yes-btn">Да</button>
+                <button class="no-btn">Нет</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Обработчики для первого экрана
         document.querySelector('#screen1 .yes-btn').addEventListener('click', function(e) {
-            const maxX = window.innerWidth - this.offsetWidth;
-            const maxY = window.innerHeight - this.offsetHeight;
-            this.style.position = 'absolute';
-            this.style.left = Math.random() * maxX + 'px';
-            this.style.top = Math.random() * maxY + 'px';
+            moveButton(this);
         });
 
         document.querySelector('#screen1 .no-btn').addEventListener('click', function() {
-            // Анимация перехода
-            document.getElementById('screen1').style.opacity = '0';
-            document.getElementById('screen1').style.visibility = 'hidden';
-            
-            document.getElementById('screen2').style.opacity = '1';
-            document.getElementById('screen2').style.visibility = 'visible';
-            document.getElementById('screen2').style.transform = 'translateY(0)';
+            switchScreen('screen2');
         });
 
-        // Обработчик ресайза для кнопки "Да"
+        // Обработчики для второго экрана
+        document.querySelector('#screen2 .yes-btn').addEventListener('click', function() {
+            switchScreen('screen3');
+            startTimer();
+        });
+
+        // Общие функции
+        function moveButton(button) {
+            const maxX = window.innerWidth - button.offsetWidth;
+            const maxY = window.innerHeight - button.offsetHeight;
+            button.style.position = 'absolute';
+            button.style.left = Math.random() * maxX + 'px';
+            button.style.top = Math.random() * maxY + 'px';
+        }
+
+        function switchScreen(targetId) {
+            // Скрыть все экраны
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.style.opacity = '0';
+                screen.style.visibility = 'hidden';
+                screen.style.transform = 'translateY(100%)';
+            });
+
+            // Показать целевой экран
+            const targetScreen = document.getElementById(targetId);
+            targetScreen.style.opacity = '1';
+            targetScreen.style.visibility = 'visible';
+            targetScreen.style.transform = 'translateY(0)';
+        }
+
+        function startTimer() {
+            let seconds = 15;
+            const timerElement = document.getElementById('timer');
+            const buttons = document.querySelector('#screen3 .buttons');
+
+            const timer = setInterval(() => {
+                seconds--;
+                timerElement.textContent = seconds;
+                
+                if(seconds <= 0) {
+                    clearInterval(timer);
+                    timerElement.classList.add('hidden');
+                    buttons.classList.remove('hidden');
+                }
+            }, 1000);
+        }
+
+        // Обработчик ресайза
         window.addEventListener('resize', function() {
             const yesBtn = document.querySelector('#screen1 .yes-btn');
             if(yesBtn.style.position === 'absolute') {
